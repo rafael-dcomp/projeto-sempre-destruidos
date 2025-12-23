@@ -1,0 +1,51 @@
+.App {
+  text-align: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+.loading {
+  font-size: 24px;
+  color: #4ecca3;
+}
+
+.lobby {
+  background-color: #16213e;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.lobby h1 {
+  color: #4ecca3;
+  margin-bottom: 30px;
+}
+
+.room-info {
+  margin: 20px 0;
+  font-size: 18px;
+}
+
+.room-info strong {
+  color: #4ecca3;
+}
+
+.connect-button {
+  background-color: #4ecca3;
+  color: #1a1a2e;
+  border: none;
+  padding: 15px 40px;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.connect-button:hover {
+  background-color: #45b393;
+}
