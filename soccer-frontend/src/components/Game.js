@@ -25,7 +25,8 @@ function Game({ roomId }) {
 
   useEffect(() => {
     // Setup WebSocket connection
-    const socket = new SockJS('/ws');
+    const wsUrl = process.env.REACT_APP_WS_URL || '/ws';
+    const socket = new SockJS(wsUrl);
     const client = new Client({
       webSocketFactory: () => socket,
       debug: (str) => {
@@ -66,12 +67,19 @@ function Game({ roomId }) {
   useEffect(() => {
     // Send input updates
     if (stompClient && connected) {
+      let lastInputState = JSON.stringify(inputsRef.current);
+      
       const interval = setInterval(() => {
-        stompClient.publish({
-          destination: `/app/input/${roomId}`,
-          body: JSON.stringify(inputsRef.current)
-        });
-      }, 1000 / 60); // 60 FPS
+        const currentInputState = JSON.stringify(inputsRef.current);
+        // Only send if input changed
+        if (currentInputState !== lastInputState) {
+          stompClient.publish({
+            destination: `/app/input/${roomId}`,
+            body: currentInputState
+          });
+          lastInputState = currentInputState;
+        }
+      }, 1000 / 30); // 30 FPS instead of 60
 
       return () => clearInterval(interval);
     }

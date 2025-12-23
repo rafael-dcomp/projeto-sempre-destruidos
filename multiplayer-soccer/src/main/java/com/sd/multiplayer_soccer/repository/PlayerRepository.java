@@ -10,6 +10,6 @@ import java.util.Optional;
 @Repository
 public interface PlayerRepository extends JpaRepository<Player, Long> {
     Optional<Player> findBySocketId(String socketId);
-    List<Player> findByRoomId(Long roomId);
+    List<Player> findByRoom_Id(Long roomId);
     void deleteBySocketId(String socketId);
 }

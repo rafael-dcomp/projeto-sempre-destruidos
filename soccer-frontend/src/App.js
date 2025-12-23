@@ -15,7 +15,8 @@ function App() {
       setRoomId(urlRoomId);
     } else {
       // Fetch available room from backend
-      fetch('/api/rooms/available')
+      const apiUrl = process.env.REACT_APP_API_URL || '';
+      fetch(`${apiUrl}/api/rooms/available`)
         .then(response => response.text())
         .then(data => {
           setRoomId(data);

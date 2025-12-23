@@ -30,6 +30,11 @@ public class GameService {
     private static final int MAX_PLAYERS_PER_ROOM = 6;
     private static final double PLAYER_RADIUS = 20.0;
     private static final double BALL_RADIUS = 10.0;
+    private static final double FIELD_WIDTH = 800.0;
+    private static final double FIELD_HEIGHT = 600.0;
+    private static final double SPAWN_MARGIN = 100.0;
+    private static final double SPAWN_AREA_WIDTH = 600.0;
+    private static final double SPAWN_AREA_HEIGHT = 400.0;
     
     public GameRoom getOrCreateRoom(String roomId) {
         Optional<GameRoom> existingRoom = gameRoomRepository.findByRoomId(roomId);
@@ -40,8 +45,8 @@ public class GameService {
         
         GameRoom newRoom = new GameRoom();
         newRoom.setRoomId(roomId);
-        newRoom.setWidth(800);
-        newRoom.setHeight(600);
+        newRoom.setWidth((int) FIELD_WIDTH);
+        newRoom.setHeight((int) FIELD_HEIGHT);
         newRoom.setRedScore(0);
         newRoom.setBlueScore(0);
         newRoom.setMatchTime(60);
@@ -78,7 +83,7 @@ public class GameService {
         
         // Initialize ball if not exists
         if (!roomBalls.containsKey(roomId)) {
-            roomBalls.put(roomId, new BallDto(400, 300, BALL_RADIUS, 0, 0));
+            roomBalls.put(roomId, new BallDto(FIELD_WIDTH / 2, FIELD_HEIGHT / 2, BALL_RADIUS, 0, 0));
         }
         
         // Determine team (balance teams)
@@ -94,8 +99,8 @@ public class GameService {
         
         // Create player DTO
         Random random = new Random();
-        double x = 100 + random.nextDouble() * 600;
-        double y = 100 + random.nextDouble() * 400;
+        double x = SPAWN_MARGIN + random.nextDouble() * SPAWN_AREA_WIDTH;
+        double y = SPAWN_MARGIN + random.nextDouble() * SPAWN_AREA_HEIGHT;
         
         PlayerDto playerDto = new PlayerDto(socketId, x, y, team);
         roomPlayers.get(roomId).put(socketId, playerDto);
@@ -162,7 +167,7 @@ public class GameService {
                 .orElseGet(() -> getOrCreateRoom(roomId));
         
         Map<String, PlayerDto> players = roomPlayers.getOrDefault(roomId, new HashMap<>());
-        BallDto ball = roomBalls.getOrDefault(roomId, new BallDto(400, 300, BALL_RADIUS, 0, 0));
+        BallDto ball = roomBalls.getOrDefault(roomId, new BallDto(FIELD_WIDTH / 2, FIELD_HEIGHT / 2, BALL_RADIUS, 0, 0));
         TeamsDto teams = roomTeams.getOrDefault(roomId, new TeamsDto(new ArrayList<>(), new ArrayList<>()));
         
         ScoreDto score = new ScoreDto(room.getRedScore(), room.getBlueScore());
