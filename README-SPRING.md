@@ -59,7 +59,7 @@ projeto-sempre-destruidos/
 │   ├── Dockerfile
 │   └── nginx.conf
 │
-└── docker-compose-new.yml       # Orquestração completa
+└── docker-compose.yml           # Orquestração completa
 ```
 
 ## 🛠️ Pré-requisitos
@@ -119,7 +119,7 @@ O frontend estará disponível em `http://localhost:3000`
 
 ```bash
 # Na raiz do projeto
-docker-compose -f docker-compose-new.yml up --build
+docker-compose up --build
 ```
 
 Isso irá:

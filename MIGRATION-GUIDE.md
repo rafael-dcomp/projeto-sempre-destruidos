@@ -109,7 +109,7 @@ Este documento descreve a refatoração completa do projeto Multiplayer Soccer d
 1. `multiplayer-soccer/Dockerfile` - Build multi-stage do Spring Boot
 2. `soccer-frontend/Dockerfile` - Build multi-stage do React com Nginx
 3. `soccer-frontend/nginx.conf` - Configuração do proxy reverso
-4. `docker-compose-new.yml` - Orquestração completa:
+4. `docker-compose.yml` - Orquestração completa:
    - PostgreSQL
    - Backend Spring Boot
    - Frontend React com Nginx
@@ -242,7 +242,7 @@ createdb multiplayer_soccer
 ### Com Docker Compose
 
 ```bash
-docker-compose -f docker-compose-new.yml up --build
+docker-compose up --build
 ```
 
 Acesse: `http://localhost:3000`
