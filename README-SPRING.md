@@ -5,7 +5,7 @@ Jogo de futebol **multiplayer 2D em tempo real** construído com **Java Spring B
 ## 🚀 Tecnologias Utilizadas
 
 ### Backend
-- **Java 21**
+- **Java 17**
 - **Spring Boot 3.2.1**
   - Spring Web
   - Spring WebSocket (STOMP)
@@ -66,7 +66,7 @@ projeto-sempre-destruidos/
 
 ### Desenvolvimento Local
 
-- **Java 21** ou superior
+- **Java 17** ou superior
 - **Node.js 18+** e **npm**
 - **PostgreSQL 15+**
 - **Maven 3.9+**
