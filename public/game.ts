@@ -61,6 +61,9 @@ interface Elements {
   scoreboard: HTMLDivElement;
   hudBottom: HTMLDivElement;
   timerBottom: HTMLDivElement;
+  goalscorersPanel: HTMLDivElement;
+  redGoalscorers: HTMLDivElement;
+  blueGoalscorers: HTMLDivElement;
 }
 
 const elements: Elements = {
@@ -75,6 +78,9 @@ const elements: Elements = {
   scoreboard: document.createElement('div'),
   hudBottom: document.createElement('div'),
   timerBottom: document.createElement('div'),
+  goalscorersPanel: document.createElement('div'),
+  redGoalscorers: document.createElement('div'),
+  blueGoalscorers: document.createElement('div'),
 };
 
 // ===============================
@@ -97,6 +103,8 @@ interface Ball {
   radius: number;
   speedX: number;
   speedY: number;
+  lastTouchPlayerId?: string | null;
+  lastTouchTeam?: 'red' | 'blue' | null;
 }
 
 interface Score {
@@ -114,6 +122,8 @@ interface Player {
   y: number;
   team: 'red' | 'blue';
   input: Omit<PlayerInput, 'action'>;
+  goals: number;
+  lastGoalTime: number;
 }
 
 interface GameState {
@@ -264,10 +274,27 @@ function initUI(): void {
   elements.hudBottom.appendChild(elements.timerBottom);
   elements.hudBottom.appendChild(elements.scoreboard);
 
-  elements.container.appendChild(elements.canvas);
-  elements.container.appendChild(elements.ui);
+  // Painel de artilheiros (direita da tela)
+  elements.goalscorersPanel.id = 'goalscorers-panel';
+  elements.redGoalscorers.id = 'red-goalscorers';
+  elements.redGoalscorers.className = 'goalscorers-list red';
+  elements.blueGoalscorers.id = 'blue-goalscorers';
+  elements.blueGoalscorers.className = 'goalscorers-list blue';
+
+  elements.goalscorersPanel.appendChild(elements.redGoalscorers);
+  elements.goalscorersPanel.appendChild(elements.blueGoalscorers);
+
+  // Cria wrapper para canvas e painel de artilheiros lado a lado
+  const canvasWrapper = document.createElement('div');
+  canvasWrapper.id = 'game-canvas-wrapper';
+  canvasWrapper.appendChild(elements.canvas);
+  canvasWrapper.appendChild(elements.ui);
+  canvasWrapper.appendChild(elements.goalscorersPanel);
+
+  elements.container.appendChild(canvasWrapper);
   elements.container.appendChild(elements.hudBottom);
 }
+
 
 initUI();
 atualizarDisplayPing();
@@ -388,6 +415,7 @@ interface WaitingForPlayersData {
 
 interface GoalScoredData {
   team: 'red' | 'blue';
+  goalScoredBy?: string;
 }
 
 interface BallResetData {
@@ -436,6 +464,8 @@ const socketHandlers = {
       y: 300,
       team: data.team,
       input: { left: false, right: false, up: false, down: false },
+      goals: 0,
+      lastGoalTime: 0,
     };
     state.gameState.teams = data.gameState.teams;
     state.canMove = state.gameState.teams.red.length > 0 && state.gameState.teams.blue.length > 0;
@@ -460,6 +490,8 @@ const socketHandlers = {
     elements.winnerDisplay.textContent = '';
     elements.winnerDisplay.style.display = 'none';
     state.matchEnded = false;
+    elements.redGoalscorers.innerHTML = '';
+    elements.blueGoalscorers.innerHTML = '';
     draw();
   },
 
@@ -578,6 +610,7 @@ socket.on('ping', (serverTimestamp: number) => {
 function updateUI(): void {
   updateRoomInfoDisplay();
   updateScoreboard();
+  updateGoalscorersPanel();
   if (state.matchEnded) {
     elements.waitingScreen.style.display = 'block';
     elements.waitingScreen.textContent = 'Partida terminada. Aguardando todos jogadores...\n';
@@ -591,10 +624,36 @@ function updateUI(): void {
   }
 }
 
-// Atualiza o texto do placar no HUD inferior
+// Atualiza o texto do placar no HUD inferior com ranking de gols
 function updateScoreboard(): void {
   if (!elements.scoreboard) return;
-  elements.scoreboard.textContent = `Red: ${state.gameState.score.red} | Blue: ${state.gameState.score.blue}`;
+  
+  // Obtém placar dos times
+  const redScore = state.gameState.score.red;
+  const blueScore = state.gameState.score.blue;
+  
+  // Cria ranking de jogadores por gols
+  const playerGoals: Array<{ id: string; team: 'red' | 'blue'; goals: number }> = [];
+  
+  for (const [id, player] of Object.entries(state.gameState.players)) {
+    if (player) {
+      playerGoals.push({
+        id: id.substring(0, 5),
+        team: player.team,
+        goals: player.goals || 0,
+      });
+    }
+  }
+  
+  // Ordena por gols (descendente)
+  playerGoals.sort((a, b) => b.goals - a.goals);
+  
+  // Monta a string do placar
+  let scoreboardText = `Red: ${redScore} | Blue: ${blueScore}`;
+  
+
+  
+  elements.scoreboard.textContent = scoreboardText;
 }
 
 // Desenha o ID de cada jogador acima da cabeça (ajustado ao tamanho do canvas na tela)
@@ -622,6 +681,63 @@ function updatePlayerIDs(): void {
       document.body.appendChild(idElement);
     }
   }
+}
+
+// Atualiza o painel vertical de artilheiros dividido em duas colunas
+function updateGoalscorersPanel(): void {
+  if (!elements.redGoalscorers || !elements.blueGoalscorers) return;
+
+  // Cria listas de artilheiros por time
+  const redGoalscorers: Array<{ id: string; playerId: string; goals: number; lastGoalTime: number }> = [];
+  const blueGoalscorers: Array<{ id: string; playerId: string; goals: number; lastGoalTime: number }> = [];
+
+  for (const [id, player] of Object.entries(state.gameState.players)) {
+    if (player && player.goals > 0) {
+      const playerInfo = { id: id.substring(0, 5), playerId: id, goals: player.goals, lastGoalTime: player.lastGoalTime };
+      if (player.team === 'red') {
+        redGoalscorers.push(playerInfo);
+      } else {
+        blueGoalscorers.push(playerInfo);
+      }
+    }
+  }
+
+  // Ordena por gols descendente, depois por lastGoalTime descendente (mais recente)
+  const sortGoalscorers = (a: typeof redGoalscorers[0], b: typeof redGoalscorers[0]) => {
+    if (b.goals !== a.goals) return b.goals - a.goals;
+    return b.lastGoalTime - a.lastGoalTime;
+  };
+
+  redGoalscorers.sort(sortGoalscorers);
+  blueGoalscorers.sort(sortGoalscorers);
+
+  // Limpa as listas
+  elements.redGoalscorers.innerHTML = '';
+  elements.blueGoalscorers.innerHTML = '';
+
+  // Renderiza artilheiros vermelhos
+  redGoalscorers.forEach((scorer, index) => {
+    const div = document.createElement('div');
+    div.className = 'goalscorer-item';
+    const isCaptain = index === 0 && redGoalscorers[0].goals > 0;
+    if (isCaptain) {
+      div.classList.add('captain');
+    }
+    div.textContent = `${isCaptain ? '👑 ' : ''}${scorer.id} (${scorer.goals})`;
+    elements.redGoalscorers.appendChild(div);
+  });
+
+  // Renderiza artilheiros azuis
+  blueGoalscorers.forEach((scorer, index) => {
+    const div = document.createElement('div');
+    div.className = 'goalscorer-item';
+    const isCaptain = index === 0 && blueGoalscorers[0].goals > 0;
+    if (isCaptain) {
+      div.classList.add('captain');
+    }
+    div.textContent = `${isCaptain ? '👑 ' : ''}${scorer.id} (${scorer.goals})`;
+    elements.blueGoalscorers.appendChild(div);
+  });
 }
 
 function showWinner(winner: 'red' | 'blue' | 'draw'): void {
@@ -934,7 +1050,15 @@ function draw(): void {
 
     // Bola
     if (state.gameState.ball.x >= -50 && state.gameState.ball.x <= config.canvas.width + 50) {
-      ctx.fillStyle = '#ffffff';
+      // Define a cor da bola baseado no último toque
+      let ballColor = '#ffffff'; // Branco por padrão
+      if (state.gameState.ball.lastTouchTeam === 'red') {
+        ballColor = '#ff0000'; // Vermelho se último toque foi do time vermelho
+      } else if (state.gameState.ball.lastTouchTeam === 'blue') {
+        ballColor = '#0000ff'; // Azul se último toque foi do time azul
+      }
+      
+      ctx.fillStyle = ballColor;
       ctx.beginPath();
       ctx.arc(state.gameState.ball.x, state.gameState.ball.y, state.gameState.ball.radius, 0, Math.PI * 2);
       ctx.fill();
@@ -946,6 +1070,7 @@ function draw(): void {
   }
 
   updatePlayerIDs();
+  updateGoalscorersPanel();
   requestAnimationFrame(draw);
 }
 
