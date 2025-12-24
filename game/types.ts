@@ -12,6 +12,8 @@ export interface Player {
     y: number;
     team: 'red' | 'blue';
     input: PlayerInput;
+    goals: number;
+    lastGoalTime: number; // Timestamp do último gol marcado
 }
 
 // Definição de tipos para a bola
@@ -21,6 +23,8 @@ export interface Ball {
     radius: number;
     speedX: number;
     speedY: number;
+    lastTouchPlayerId: string | null;
+    lastTouchTeam: 'red' | 'blue' | null;
 }
 
 // Definição de tipos para o placar
