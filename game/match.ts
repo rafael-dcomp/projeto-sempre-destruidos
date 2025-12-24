@@ -49,6 +49,7 @@ export function startNewMatch(room: Room, io: SocketIOServer): void {
         const player = room.players[id];
         player.x = player.team === 'red' ? 100 : room.width - 100;
         player.y = room.height / 2;
+        player.goals = 0; // Reseta gols individuais dos jogadores para a nova partida
     });
 
     io.to(room.id).emit('cleanPreviousMatch');
