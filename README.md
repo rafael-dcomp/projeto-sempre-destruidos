@@ -552,6 +552,48 @@ docker-compose restart
 
 ---
 
+## CI/CD e Maturidade de Evolução
+
+### Auditoria Automatizada de CI/CD
+
+Este projeto inclui uma ferramenta automatizada para auditar a maturidade de CI/CD de repositórios GitHub.
+
+#### Executar Auditoria
+
+```bash
+# Auditar este repositório
+npm run audit:ci
+
+# Auditar outro repositório
+node scripts/audit/ci-audit.js <owner> <repo> [github-token]
+```
+
+#### Relatórios Gerados
+
+- `docs/audit/audit-report.md` - Relatório formatado
+- `docs/audit/audit-report.json` - Dados estruturados
+
+#### Pipeline de Integração Contínua
+
+O projeto possui pipeline CI/CD com GitHub Actions (`.github/workflows/ci.yml`):
+
+- ✅ **Build Automático** - Compilação TypeScript
+- ✅ **Security Audit** - Auditoria de vulnerabilidades
+- ✅ **Code Quality** - Verificações de qualidade
+
+**Triggers:**
+- Push para `main`, `develop`, `copilot/**`
+- Pull Requests para `main`, `develop`
+
+#### Documentação CI/CD
+
+- 📘 [Guia Completo de CI/CD](docs/CICD-GUIDE.md)
+- 📊 [Resumo Executivo](docs/EXECUTIVE-SUMMARY.md)
+- 🚀 [Quick Start CI/CD](docs/CICD-QUICKSTART.md)
+- 📖 [Documentação da Auditoria](docs/audit/README.md)
+
+---
+
 ## Licença
 
 Este projeto está licenciado sob a licença **ISC**.

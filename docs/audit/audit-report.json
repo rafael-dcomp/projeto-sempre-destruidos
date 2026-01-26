@@ -1,14 +1,14 @@
 {
   "repository": "rafael-dcomp/projeto-sempre-destruidos",
-  "timestamp": "2026-01-26T19:48:21.055Z",
+  "timestamp": "2026-01-26T19:51:52.780Z",
   "hasCI": false,
   "hasBuildSystem": true,
   "hasTests": false,
   "workflows": [],
   "pullRequests": {
     "total": 17,
-    "withChecks": 1,
-    "withoutChecks": 9
+    "withChecks": 0,
+    "withoutChecks": 10
   },
   "maturityLevel": "Initial (Level 1)",
   "risks": [

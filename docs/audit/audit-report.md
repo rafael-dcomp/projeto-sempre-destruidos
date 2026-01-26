@@ -1,7 +1,7 @@
 # CI/CD Maturity Audit Report
 
 **Repository:** rafael-dcomp/projeto-sempre-destruidos
-**Date:** 1/26/2026, 7:48:21 PM
+**Date:** 1/26/2026, 7:51:52 PM
 **Maturity Level:** Initial (Level 1)
 
 ---
@@ -35,8 +35,8 @@
 ### Pull Request Analysis
 
 - **Total PRs Analyzed:** 17
-- **PRs with Automated Checks:** 1
-- **PRs without Checks:** 9
+- **PRs with Automated Checks:** 0
+- **PRs without Checks:** 10
 
 ## ⚠️ Identified Risks
 
