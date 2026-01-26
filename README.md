@@ -599,11 +599,15 @@ open report.json.html
 
 ### Documentação Completa de Load Testing
 
+📚 **[Índice Completo da Documentação](./load-tests/INDEX.md)** - Navegue por toda a documentação
+
+Documentos principais:
 - 📖 **[Guia Rápido](./load-tests/GUIA-RAPIDO.md)** - Começar rapidamente com comandos essenciais
 - 📚 **[README Completo](./load-tests/README.md)** - Documentação detalhada de todos os recursos
 - 📊 **[Guia de Relatórios](./load-tests/RELATORIOS.md)** - Como gerar e analisar relatórios HTML
 - 🎨 **[Exemplos Visuais](./load-tests/EXEMPLOS-VISUAIS.md)** - Visualização de padrões de carga
 - 🔍 **[Comparação de Testes](./load-tests/COMPARACAO.md)** - Quando usar cada tipo de teste
+- 🔧 **[Troubleshooting](./load-tests/TROUBLESHOOTING.md)** - Solução de problemas comuns
 - ⚙️ **[Template de Configuração](./load-tests/config-template.yml)** - Criar testes customizados
 
 ### Parâmetros Principais
