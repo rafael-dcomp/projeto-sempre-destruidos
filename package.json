@@ -17,7 +17,8 @@
     "build:server": "tsc",
     "build:client": "tsc -p tsconfig.client.json",
     "start": "npm run build && node dist/game-server.js",
-    "dev": "ts-node game-server.ts"
+    "dev": "ts-node game-server.ts",
+    "audit:ci": "node scripts/audit/ci-audit.js rafael-dcomp projeto-sempre-destruidos"
   },
   "keywords": [],
   "author": "",

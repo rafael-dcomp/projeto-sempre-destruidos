@@ -1,0 +1,47 @@
+{
+  "repository": "rafael-dcomp/projeto-sempre-destruidos",
+  "timestamp": "2026-01-26T19:48:21.055Z",
+  "hasCI": false,
+  "hasBuildSystem": true,
+  "hasTests": false,
+  "workflows": [],
+  "pullRequests": {
+    "total": 17,
+    "withChecks": 1,
+    "withoutChecks": 9
+  },
+  "maturityLevel": "Initial (Level 1)",
+  "risks": [
+    "No automated CI/CD pipeline",
+    "Manual testing increases risk of regressions",
+    "No automated quality checks",
+    "Dependent on individual developer knowledge",
+    "Difficult onboarding for new contributors",
+    "No consistent build process",
+    "Longer time to detect issues"
+  ],
+  "recommendations": [
+    "Implement GitHub Actions workflow for automated builds",
+    "Add automated testing to the pipeline",
+    "Configure code quality checks (linting, static analysis)",
+    "Set up automated deployment for different environments",
+    "Require CI checks to pass before merging PRs",
+    "Document the build and test process"
+  ],
+  "repoInfo": {
+    "name": "projeto-sempre-destruidos",
+    "description": "projeto-sempre-destruidos created by GitHub Classroom",
+    "language": "TypeScript",
+    "stars": 1,
+    "forks": 1,
+    "openIssues": 1
+  },
+  "packageScripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc && tsc -p tsconfig.client.json",
+    "build:server": "tsc",
+    "build:client": "tsc -p tsconfig.client.json",
+    "start": "npm run build && node dist/game-server.js",
+    "dev": "ts-node game-server.ts"
+  }
+}
