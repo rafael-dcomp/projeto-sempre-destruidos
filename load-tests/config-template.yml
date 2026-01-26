@@ -1,0 +1,186 @@
+config:
+  # ========================================
+  # SERVIDOR ALVO
+  # ========================================
+  # Modifique para apontar para seu servidor
+  target: 'http://localhost:3000'
+  # target: 'https://meu-servidor.com'
+  
+  # ========================================
+  # FASES DO TESTE
+  # ========================================
+  # Defina como a carga será aplicada ao longo do tempo
+  phases:
+    # Fase 1: Aquecimento
+    - duration: 30              # Duração em segundos
+      arrivalRate: 5            # Novos usuários por segundo
+      name: "Aquecimento"
+    
+    # Fase 2: Ramp-up (aumento gradual)
+    - duration: 60
+      arrivalRate: 5
+      rampTo: 20                # Aumentar de 5 para 20 usuários/seg
+      name: "Ramp-up"
+    
+    # Fase 3: Carga sustentada
+    - duration: 120
+      arrivalRate: 20
+      name: "Carga sustentada"
+    
+    # Fase 4: Desaceleração
+    - duration: 30
+      arrivalRate: 10
+      name: "Desaceleração"
+  
+  # ========================================
+  # CONFIGURAÇÕES ADICIONAIS
+  # ========================================
+  
+  # Timeout para requisições (em segundos)
+  timeout: 30
+  
+  # Processadores customizados (funções JavaScript)
+  processor: "./load-tests/functions.js"
+  
+  # Variáveis globais (podem ser usadas com {{ variavel }})
+  variables:
+    testUser: "usuario_teste"
+    testPassword: "Senha123!@#"
+    apiVersion: "v1"
+
+# ========================================
+# CENÁRIOS DE TESTE
+# ========================================
+# Defina o que os usuários virtuais farão
+scenarios:
+  # Cenário 1: Exemplo de POST (Login)
+  - name: "Login de Usuário"
+    weight: 40                  # 40% dos usuários executarão este cenário
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            username: "{{ testUser }}"
+            password: "{{ testPassword }}"
+          capture:
+            # Captura dados da resposta para uso posterior
+            - json: "$.token"
+              as: "authToken"
+          expect:
+            # Validações da resposta
+            - statusCode: 
+                - 200
+                - 401
+            - contentType: json
+  
+  # Cenário 2: Exemplo de GET (Ranking)
+  - name: "Consultar Ranking"
+    weight: 30                  # 30% dos usuários
+    flow:
+      - get:
+          url: "/api/auth/ranking"
+          expect:
+            - statusCode: 200
+            - contentType: json
+  
+  # Cenário 3: Exemplo de POST (Registro)
+  - name: "Registro de Novo Usuário"
+    weight: 30                  # 30% dos usuários
+    flow:
+      - post:
+          url: "/api/auth/register"
+          json:
+            username: "user_{{ $randomString() }}"
+            password: "{{ testPassword }}"
+          expect:
+            - statusCode: 
+                - 200
+                - 409           # Conflito (usuário já existe)
+
+# ========================================
+# CENÁRIOS AVANÇADOS
+# ========================================
+# Exemplos de cenários mais complexos:
+
+  # Cenário 4: Sequência de ações
+  # - name: "Fluxo Completo"
+  #   weight: 20
+  #   flow:
+  #     # 1. Fazer login
+  #     - post:
+  #         url: "/api/auth/login"
+  #         json:
+  #           username: "{{ testUser }}"
+  #           password: "{{ testPassword }}"
+  #         capture:
+  #           - json: "$.token"
+  #             as: "authToken"
+  #     
+  #     # 2. Aguardar 2 segundos (simula tempo de leitura)
+  #     - think: 2
+  #     
+  #     # 3. Fazer requisição autenticada
+  #     - get:
+  #         url: "/api/perfil"
+  #         headers:
+  #           Authorization: "Bearer {{ authToken }}"
+  #     
+  #     # 4. Aguardar mais 3 segundos
+  #     - think: 3
+  #     
+  #     # 5. Consultar ranking
+  #     - get:
+  #         url: "/api/auth/ranking"
+
+# ========================================
+# FUNÇÕES DISPONÍVEIS
+# ========================================
+# Você pode usar estas funções em variáveis:
+#
+# {{ $randomString() }}          - String aleatória
+# {{ $randomNumber(1, 100) }}    - Número entre 1 e 100
+# {{ $randomBoolean() }}         - true ou false
+# {{ variavel }}                 - Variável definida em config.variables
+
+# ========================================
+# DICAS DE CONFIGURAÇÃO
+# ========================================
+#
+# CARGA LEVE:
+#   - arrivalRate: 5-20
+#   - duration: 60-120 segundos
+#
+# CARGA MÉDIA:
+#   - arrivalRate: 20-50
+#   - duration: 120-300 segundos
+#
+# CARGA PESADA:
+#   - arrivalRate: 50-150
+#   - duration: 60-180 segundos
+#
+# TESTE DE ESTRESSE:
+#   - arrivalRate: 150-500
+#   - duration: 30-120 segundos
+#
+# SPIKE TEST (pico repentino):
+#   - Carga normal → Spike → Volta ao normal
+#   - Usar rampTo para aumentar rapidamente
+#
+# SOAK TEST (longa duração):
+#   - arrivalRate: moderado (20-30)
+#   - duration: 3600+ segundos (1+ hora)
+
+# ========================================
+# COMO USAR ESTE TEMPLATE
+# ========================================
+# 1. Copie este arquivo:
+#    cp load-tests/config-template.yml load-tests/meu-teste.yml
+#
+# 2. Edite meu-teste.yml com suas configurações
+#
+# 3. Execute:
+#    npx artillery run load-tests/meu-teste.yml
+#
+# 4. Para gerar relatório HTML:
+#    npx artillery run --output report.json load-tests/meu-teste.yml
+#    npx artillery report report.json

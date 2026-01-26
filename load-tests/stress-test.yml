@@ -1,0 +1,82 @@
+config:
+  # Configuração do target (servidor a ser testado)
+  target: 'http://localhost:3000'
+  
+  # TESTE DE ESTRESSE - Leva o sistema ao limite
+  phases:
+    # Fase 1: Aquecimento
+    - duration: 10
+      arrivalRate: 50
+      name: "Aquecimento inicial"
+    
+    # Fase 2: Ramp-up rápido
+    - duration: 30
+      arrivalRate: 50
+      rampTo: 200
+      name: "Ramp-up rápido"
+    
+    # Fase 3: Carga extrema
+    - duration: 60
+      arrivalRate: 200
+      name: "Carga extrema sustentada"
+    
+    # Fase 4: Spike test - Pico repentino
+    - duration: 20
+      arrivalRate: 300
+      name: "Spike test - Pico repentino"
+    
+    # Fase 5: Recuperação
+    - duration: 30
+      arrivalRate: 200
+      rampTo: 50
+      name: "Fase de recuperação"
+    
+    # Fase 6: Carga normal pós-estresse
+    - duration: 20
+      arrivalRate: 50
+      name: "Carga normal pós-estresse"
+  
+  # Timeout maior para requisições sob estresse
+  timeout: 60
+  
+  # Processadores
+  processor: "./load-tests/functions.js"
+  
+  # Variáveis de ambiente
+  variables:
+    testUser: "loadtest_user"
+    testPassword: "Test123!@#"
+
+scenarios:
+  # Cenário 1: Registro massivo
+  - name: "Registro Massivo"
+    weight: 25
+    flow:
+      - post:
+          url: "/api/auth/register"
+          json:
+            username: "stress_user_{{ $randomString() }}"
+            password: "{{ testPassword }}"
+
+  # Cenário 2: Login intenso
+  - name: "Login Intenso"
+    weight: 40
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            username: "user_{{ $randomNumber(1, 5000) }}"
+            password: "{{ testPassword }}"
+          capture:
+            - json: "$.token"
+              as: "authToken"
+
+  # Cenário 3: Ranking sob estresse
+  - name: "Ranking Sob Estresse"
+    weight: 35
+    flow:
+      - get:
+          url: "/api/auth/ranking"
+      - think: 0.05
+      - get:
+          url: "/api/auth/ranking"

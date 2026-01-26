@@ -17,7 +17,13 @@
     "build:server": "tsc",
     "build:client": "tsc -p tsconfig.client.json",
     "start": "npm run build && node dist/game-server.js",
-    "dev": "ts-node game-server.ts"
+    "dev": "ts-node game-server.ts",
+    "load-test:light": "artillery run load-tests/http-light-load.yml",
+    "load-test:medium": "artillery run load-tests/http-medium-load.yml",
+    "load-test:heavy": "artillery run load-tests/http-heavy-load.yml",
+    "load-test:stress": "artillery run load-tests/stress-test.yml",
+    "load-test:websocket": "artillery run load-tests/websocket-test.yml",
+    "load-test:all": "npm run load-test:light && npm run load-test:medium && npm run load-test:heavy"
   },
   "keywords": [],
   "author": "",
@@ -31,6 +37,7 @@
     "@types/pg": "^8.16.0",
     "@types/socket.io": "^3.0.1",
     "@types/socket.io-client": "^1.4.36",
+    "artillery": "^1.7.9",
     "code2flow": "^0.0.1-alpha.0",
     "dependency-cruiser": "^17.3.5",
     "ts-node": "^10.9.2",

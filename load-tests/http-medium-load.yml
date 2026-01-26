@@ -1,0 +1,98 @@
+config:
+  # Configuração do target (servidor a ser testado)
+  target: 'http://localhost:3000'
+  
+  # Fases do teste de carga MÉDIA
+  phases:
+    # Fase 1: Aquecimento - 20 usuários virtuais por segundo durante 30 segundos
+    - duration: 30
+      arrivalRate: 20
+      name: "Aquecimento - Carga média"
+    
+    # Fase 2: Ramp-up - Aumentando de 20 para 50 usuários virtuais por segundo durante 60 segundos
+    - duration: 60
+      arrivalRate: 20
+      rampTo: 50
+      name: "Ramp-up para carga média"
+    
+    # Fase 3: Carga sustentada - 50 usuários virtuais por segundo durante 120 segundos
+    - duration: 120
+      arrivalRate: 50
+      name: "Carga média sustentada"
+    
+    # Fase 4: Desaceleração - 30 usuários virtuais por segundo durante 30 segundos
+    - duration: 30
+      arrivalRate: 30
+      name: "Desaceleração"
+  
+  # Processadores e plugins
+  processor: "./load-tests/functions.js"
+  
+  # Variáveis de ambiente
+  variables:
+    testUser: "loadtest_user"
+    testPassword: "Test123!@#"
+
+scenarios:
+  # Cenário 1: Testar endpoint de registro
+  - name: "Registro de Usuário"
+    weight: 25
+    flow:
+      - post:
+          url: "/api/auth/register"
+          json:
+            username: "user_{{ $randomString() }}"
+            password: "{{ testPassword }}"
+          capture:
+            - json: "$.token"
+              as: "authToken"
+          expect:
+            - statusCode: 
+                - 200
+                - 409
+            - contentType: json
+
+  # Cenário 2: Testar endpoint de login
+  - name: "Login de Usuário"
+    weight: 40
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            username: "{{ testUser }}"
+            password: "{{ testPassword }}"
+          capture:
+            - json: "$.token"
+              as: "authToken"
+          expect:
+            - statusCode: 
+                - 200
+                - 401
+            - contentType: json
+
+  # Cenário 3: Obter ranking
+  - name: "Consultar Ranking"
+    weight: 20
+    flow:
+      - get:
+          url: "/api/auth/ranking"
+          expect:
+            - statusCode: 200
+            - contentType: json
+
+  # Cenário 4: Sequência completa de login + ranking
+  - name: "Login e Ranking"
+    weight: 15
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            username: "user_{{ $randomNumber(1, 100) }}"
+            password: "{{ testPassword }}"
+          capture:
+            - json: "$.token"
+              as: "authToken"
+      - get:
+          url: "/api/auth/ranking"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
