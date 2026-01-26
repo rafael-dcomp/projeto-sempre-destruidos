@@ -35,6 +35,7 @@ O servidor simula a física básica do jogo (movimentação, colisão jogador x 
 - [Tecnologias Utilizadas](#tecnologias-utilizadas)
 - [Instalação e Execução](#instalação-e-execução)
 - [Docker e Containers](#docker-e-containers)
+- [Testes de Carga](#testes-de-carga-load-testing)
 - [Documentação Adicional](#documentação-adicional)
 - [Licença](#licença)
 
@@ -598,10 +599,12 @@ open report.json.html
 
 ### Documentação Completa de Load Testing
 
-- **[Guia Rápido](./load-tests/GUIA-RAPIDO.md)** - Começar rapidamente
-- **[README Completo](./load-tests/README.md)** - Documentação detalhada
-- **[Guia de Relatórios](./load-tests/RELATORIOS.md)** - Como gerar e analisar relatórios
-- **[Template de Configuração](./load-tests/config-template.yml)** - Criar testes customizados
+- 📖 **[Guia Rápido](./load-tests/GUIA-RAPIDO.md)** - Começar rapidamente com comandos essenciais
+- 📚 **[README Completo](./load-tests/README.md)** - Documentação detalhada de todos os recursos
+- 📊 **[Guia de Relatórios](./load-tests/RELATORIOS.md)** - Como gerar e analisar relatórios HTML
+- 🎨 **[Exemplos Visuais](./load-tests/EXEMPLOS-VISUAIS.md)** - Visualização de padrões de carga
+- 🔍 **[Comparação de Testes](./load-tests/COMPARACAO.md)** - Quando usar cada tipo de teste
+- ⚙️ **[Template de Configuração](./load-tests/config-template.yml)** - Criar testes customizados
 
 ### Parâmetros Principais
 
