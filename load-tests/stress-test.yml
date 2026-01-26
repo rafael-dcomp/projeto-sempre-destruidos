@@ -51,21 +51,23 @@ scenarios:
   # Cenário 1: Registro massivo
   - name: "Registro Massivo"
     weight: 25
+    beforeRequest: "setVariables"
     flow:
       - post:
           url: "/api/auth/register"
           json:
-            username: "stress_user_{{ $randomString() }}"
+            username: "{{ randomUsername }}"
             password: "{{ testPassword }}"
 
   # Cenário 2: Login intenso
   - name: "Login Intenso"
     weight: 40
+    beforeRequest: "setVariables"
     flow:
       - post:
           url: "/api/auth/login"
           json:
-            username: "user_{{ $randomNumber(1, 5000) }}"
+            username: "{{ randomUsername }}"
             password: "{{ testPassword }}"
           capture:
             - json: "$.token"

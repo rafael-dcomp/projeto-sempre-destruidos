@@ -31,11 +31,12 @@ scenarios:
   # Cenário 1: Testar endpoint de registro
   - name: "Registro de Usuário"
     weight: 30
+    beforeRequest: "setVariables"
     flow:
       - post:
           url: "/api/auth/register"
           json:
-            username: "user_{{ $randomString() }}"
+            username: "{{ randomUsername }}"
             password: "{{ testPassword }}"
           capture:
             - json: "$.token"

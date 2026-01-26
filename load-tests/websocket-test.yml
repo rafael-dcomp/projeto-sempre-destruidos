@@ -46,12 +46,24 @@ scenarios:
         - emit:
             channel: "playerInput"
             data:
-              left: "{{ $randomBoolean() }}"
-              right: "{{ $randomBoolean() }}"
-              up: "{{ $randomBoolean() }}"
-              down: "{{ $randomBoolean() }}"
+              left: true
+              right: false
+              up: false
+              down: false
         - think: 0.1
-        count: 100
+        count: 50
+      
+      # Mais movimentos variados
+      - loop:
+        - emit:
+            channel: "playerInput"
+            data:
+              left: false
+              right: true
+              up: true
+              down: false
+        - think: 0.1
+        count: 50
       
       # Aguardar alguns segundos antes de desconectar
       - think: 3

@@ -46,11 +46,12 @@ scenarios:
   # Cenário 1: Testar endpoint de registro
   - name: "Registro de Usuário"
     weight: 20
+    beforeRequest: "setVariables"
     flow:
       - post:
           url: "/api/auth/register"
           json:
-            username: "user_{{ $randomString() }}"
+            username: "{{ randomUsername }}"
             password: "{{ testPassword }}"
           capture:
             - json: "$.token"
@@ -59,11 +60,12 @@ scenarios:
   # Cenário 2: Testar endpoint de login
   - name: "Login de Usuário"
     weight: 45
+    beforeRequest: "setVariables"
     flow:
       - post:
           url: "/api/auth/login"
           json:
-            username: "user_{{ $randomNumber(1, 1000) }}"
+            username: "{{ randomUsername }}"
             password: "{{ testPassword }}"
           capture:
             - json: "$.token"
@@ -79,11 +81,12 @@ scenarios:
   # Cenário 4: Sequência completa de múltiplas requisições
   - name: "Sequência Completa"
     weight: 10
+    beforeRequest: "setVariables"
     flow:
       - post:
           url: "/api/auth/login"
           json:
-            username: "user_{{ $randomNumber(1, 500) }}"
+            username: "{{ randomUsername }}"
             password: "{{ testPassword }}"
           capture:
             - json: "$.token"
