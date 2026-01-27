@@ -1,0 +1,97 @@
+config:
+  # Configuração do target (servidor a ser testado)
+  target: 'http://localhost'
+  
+  # Fases do teste de carga PESADA
+  phases:
+    # Fase 1: Aquecimento - 30 usuários virtuais por segundo durante 20 segundos
+    - duration: 20
+      arrivalRate: 30
+      name: "Aquecimento - Preparação para carga pesada"
+    
+    # Fase 2: Ramp-up agressivo - Aumentando de 30 para 100 usuários virtuais por segundo durante 40 segundos
+    - duration: 40
+      arrivalRate: 30
+      rampTo: 100
+      name: "Ramp-up agressivo"
+    
+    # Fase 3: Carga pesada - 100 usuários virtuais por segundo durante 90 segundos
+    - duration: 90
+      arrivalRate: 100
+      name: "Carga pesada sustentada"
+    
+    # Fase 4: Pico de carga - Aumentando de 100 para 150 usuários virtuais por segundo durante 30 segundos
+    - duration: 30
+      arrivalRate: 100
+      rampTo: 150
+      name: "Pico de carga"
+    
+    # Fase 5: Desaceleração - 50 usuários virtuais por segundo durante 20 segundos
+    - duration: 20
+      arrivalRate: 50
+      name: "Desaceleração"
+  
+  # Timeout para requisições
+  timeout: 30
+  
+  # Processadores e plugins
+  processor: "./functions.js"
+  
+  # Variáveis de ambiente
+  variables:
+    testUser: "loadtest_user"
+    testPassword: "Test123!@#"
+
+scenarios:
+  # Cenário 1: Testar endpoint de registro
+  - name: "Registro de Usuário"
+    weight: 20
+    beforeRequest: "setVariables"
+    flow:
+      - post:
+          url: "/api/auth/register"
+          json:
+            username: "{{ randomUsername }}"
+            password: "{{ testPassword }}"
+          capture:
+            - json: "$.token"
+              as: "authToken"
+
+  # Cenário 2: Testar endpoint de login
+  - name: "Login de Usuário"
+    weight: 45
+    beforeRequest: "setVariables"
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            username: "{{ randomUsername }}"
+            password: "{{ testPassword }}"
+          capture:
+            - json: "$.token"
+              as: "authToken"
+
+  # Cenário 3: Obter ranking
+  - name: "Consultar Ranking"
+    weight: 25
+    flow:
+      - get:
+          url: "/api/auth/ranking"
+
+  # Cenário 4: Sequência completa de múltiplas requisições
+  - name: "Sequência Completa"
+    weight: 10
+    beforeRequest: "setVariables"
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            username: "{{ randomUsername }}"
+            password: "{{ testPassword }}"
+          capture:
+            - json: "$.token"
+              as: "authToken"
+      - get:
+          url: "/api/auth/ranking"
+      - get:
+          url: "/api/auth/ranking"

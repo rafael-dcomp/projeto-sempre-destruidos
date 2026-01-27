@@ -99,3 +99,9 @@ sessionstorage/
 *.p12
 ssl/
 
+# Artillery Load Testing Reports
+load-tests/reports/
+report-*.json
+report-*.json.html
+*.artillery.json
+

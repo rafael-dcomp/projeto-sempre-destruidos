@@ -1,0 +1,69 @@
+config:
+  # Configuração do target (servidor a ser testado)
+  target: 'http://localhost'
+  
+  # Engine para testes Socket.IO
+  engines:
+    socketio:
+      # Transporte WebSocket
+      transports: ['websocket']
+  
+  # Fases do teste de WebSocket
+  phases:
+    # Fase 1: Conectar usuários gradualmente
+    - duration: 30
+      arrivalRate: 2
+      name: "Conexões iniciais de WebSocket"
+    
+    # Fase 2: Aumentar conexões simultâneas
+    - duration: 60
+      arrivalRate: 2
+      rampTo: 5
+      name: "Ramp-up de conexões WebSocket"
+    
+    # Fase 3: Manter carga constante
+    - duration: 90
+      arrivalRate: 5
+      name: "Conexões WebSocket sustentadas"
+  
+  # Processadores
+  processor: "./functions.js"
+
+scenarios:
+  # Cenário 1: Conectar e enviar inputs de jogador
+  - name: "Conexão WebSocket e Gameplay"
+    engine: socketio
+    flow:
+      # Conectar ao servidor Socket.IO
+      - emit:
+          channel: "connection"
+      
+      # Aguardar evento de inicialização
+      - think: 1
+      
+      # Simular movimento do jogador (enviar inputs)
+      - loop:
+        - emit:
+            channel: "playerInput"
+            data:
+              left: true
+              right: false
+              up: false
+              down: false
+        - think: 0.1
+        count: 50
+      
+      # Mais movimentos variados
+      - loop:
+        - emit:
+            channel: "playerInput"
+            data:
+              left: false
+              right: true
+              up: true
+              down: false
+        - think: 0.1
+        count: 50
+      
+      # Aguardar alguns segundos antes de desconectar
+      - think: 3
