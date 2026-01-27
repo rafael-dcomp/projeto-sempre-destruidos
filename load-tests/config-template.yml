@@ -3,7 +3,7 @@ config:
   # SERVIDOR ALVO
   # ========================================
   # Modifique para apontar para seu servidor
-  target: 'http://localhost:3000'
+  target: 'http://localhost'
   # target: 'https://meu-servidor.com'
   
   # ========================================

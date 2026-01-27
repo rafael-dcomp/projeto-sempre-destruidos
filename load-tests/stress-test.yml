@@ -1,6 +1,6 @@
 config:
   # Configuração do target (servidor a ser testado)
-  target: 'http://localhost:3000'
+  target: 'http://localhost'
   
   # TESTE DE ESTRESSE - Leva o sistema ao limite
   phases:
