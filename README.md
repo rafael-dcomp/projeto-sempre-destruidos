@@ -597,33 +597,18 @@ npx artillery report report.json
 open report.json.html
 ```
 
-### Documentação Completa de Load Testing
-
-📚 **[Índice Completo da Documentação](./load-tests/INDEX.md)** - Navegue por toda a documentação
-
-Documentos principais:
-- 📖 **[Guia Rápido](./load-tests/GUIA-RAPIDO.md)** - Começar rapidamente com comandos essenciais
-- 📚 **[README Completo](./load-tests/README.md)** - Documentação detalhada de todos os recursos
-- 📊 **[Guia de Relatórios](./load-tests/RELATORIOS.md)** - Como gerar e analisar relatórios HTML
-- 🎨 **[Exemplos Visuais](./load-tests/EXEMPLOS-VISUAIS.md)** - Visualização de padrões de carga
-- 🔍 **[Comparação de Testes](./load-tests/COMPARACAO.md)** - Quando usar cada tipo de teste
-- 🔧 **[Troubleshooting](./load-tests/TROUBLESHOOTING.md)** - Solução de problemas comuns
-- ⚙️ **[Template de Configuração](./load-tests/config-template.yml)** - Criar testes customizados
-
 ### Parâmetros Principais
 
 Os testes podem ser customizados editando os arquivos `.yml` em `load-tests/`:
 
 ```yaml
 config:
-  target: 'http://localhost:3000'  # Servidor a testar
+  target: 'http://localhost'  # Servidor a testar
   phases:
     - duration: 60        # Duração em segundos
       arrivalRate: 20     # Usuários virtuais por segundo
       rampTo: 50          # Aumentar até este valor (opcional)
 ```
-
-Para mais detalhes sobre como ajustar parâmetros e criar cenários customizados, consulte a [documentação completa](./load-tests/README.md).
 
 ---
 
