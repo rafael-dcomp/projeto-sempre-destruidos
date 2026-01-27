@@ -20,7 +20,7 @@ config:
       name: "Desaceleração"
   
   # Processadores e plugins
-  processor: "./load-tests/functions.js"
+  processor: "./functions.js"
   
   # Variáveis de ambiente
   variables:

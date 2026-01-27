@@ -40,7 +40,7 @@ config:
   timeout: 60
   
   # Processadores
-  processor: "./load-tests/functions.js"
+  processor: "./functions.js"
   
   # Variáveis de ambiente
   variables:

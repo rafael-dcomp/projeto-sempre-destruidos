@@ -40,7 +40,7 @@ config:
   timeout: 30
   
   # Processadores customizados (funções JavaScript)
-  processor: "./load-tests/functions.js"
+  processor: "./functions.js"
   
   # Variáveis globais (podem ser usadas com {{ variavel }})
   variables:

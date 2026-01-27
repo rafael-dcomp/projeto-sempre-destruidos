@@ -27,7 +27,7 @@ config:
       name: "Conexões WebSocket sustentadas"
   
   # Processadores
-  processor: "./load-tests/functions.js"
+  processor: "./functions.js"
 
 scenarios:
   # Cenário 1: Conectar e enviar inputs de jogador
